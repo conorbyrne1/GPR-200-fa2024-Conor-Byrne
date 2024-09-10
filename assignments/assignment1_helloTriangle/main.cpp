@@ -14,7 +14,7 @@ float vertices[] = {
 	 0.5f, -0.5f, 0.0f,
 	 0.0f,  0.5f, 0.0f
 };
-
+//h
 const char *vertexShaderSource = "#version 330 core\n"
 "layout(location = 0) in vec3 aPos;\n"
 "void main()\n"
