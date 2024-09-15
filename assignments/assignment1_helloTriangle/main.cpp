@@ -5,6 +5,7 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <C:\Users\Conor\Desktop\GPR-200-fa2024-Conor-Byrne\core\Conor\shader.h>
 
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
@@ -16,39 +17,7 @@ float vertices[] = {
 	 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 };
 
-//const char *vertexShaderSource = "#version 330 core\n"
-//"layout(location = 0) in vec3 aPos;\n"
-//"void main()\n"
-//"{\n"
-//	"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-//"}\0";
-
-//raw string version:
-const char* vertexShaderSource = R"(#version 330 core
-layout(location = 0) in vec3 aPos;
-layout (location = 1) in vec4 aColor;
-out vec4 Color; //Varying
-uniform float uTime;
-void main()
-{
-	Color = aColor; //Pass-through - not actually editing the color in this shader, just assigning a value and sending it back
-	vec3 pos = aPos;
-	pos.y += (cos(uTime + 6.0 - pos.x)/3);
-	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-}
-)";
-
-const char* fragmentShaderSource = R"(#version 330 core
-out vec4 FragColor;
-in vec4 Color;
-uniform float uTime;
-//uniform vec4 uColor = vec3(1.0);
-void main()
-{
-    //FragColor = Color; //vec4(1.0f, 0.5f, 0.2f, 1.0f); - no longer assigning an abitrary color to the pixels
-	FragColor = Color * (cos(uTime) * 0.5 + 0.5);
-} 
-)";
+Shader myShader("vertexShader.vert", "fragmentShader.frag");
 
 int main() {
 	printf("Initializing...");
@@ -85,46 +54,6 @@ int main() {
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
 
-	//create and compile vertex shader
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("ERROR::SHADER::VERTEX::COMILATION_FAILED\n%s", infoLog);
-	}
-
-	//create and compile fragment shader
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		printf("ERROR::SHADER::FRAGMENT::COMILATION_FAILED\n%s", infoLog);
-	}
-
-	//Create shader program and link
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	glGetShaderiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(shaderProgram, 512, NULL, infoLog);
-		printf("ERROR::PROGRAM::LINKING_FAILED\n%s", infoLog);
-	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -137,11 +66,8 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
-
-		//Set time uniform
-		int timeLoc = glGetUniformLocation(shaderProgram, "uTime");
-		glUniform1f(timeLoc, time);
+		//render the triangle
+		myShader.use();
 
 		glBindVertexArray(VAO); //this happens 2x for clarity's sake
 		

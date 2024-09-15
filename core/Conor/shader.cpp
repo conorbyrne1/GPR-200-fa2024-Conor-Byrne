@@ -1,9 +1,11 @@
-#include "Shader.h"
+#include <C:\Users\Conor\Desktop\GPR-200-fa2024-Conor-Byrne\core\Conor\shader.h>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "../ew/external/glad.h"
+#include <C:\Users\Conor\Desktop\GPR-200-fa2024-Conor-Byrne\core\ew\external\glad.h>
+//cant do any other way of including glad.h for some reason
+
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
