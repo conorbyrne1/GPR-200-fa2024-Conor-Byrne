@@ -1,10 +1,9 @@
-#include <C:\Users\Conor\Desktop\GPR-200-fa2024-Conor-Byrne\core\Conor\shader.h>
+#include "shader.h"
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <C:\Users\Conor\Desktop\GPR-200-fa2024-Conor-Byrne\core\ew\external\glad.h>
-//cant do any other way of including glad.h for some reason
+#include "../ew/external/glad.h"
 
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
@@ -33,10 +32,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
     }
-    catch (std::ifstream::failure& e)
-    {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-    }
+   catch (std::ifstream::failure& e)
+{
+    std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ for " << vertexPath << " or " << fragmentPath << std::endl;
+}
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
 

@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <math.h>
-
 #include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <C:\Users\Conor\Desktop\GPR-200-fa2024-Conor-Byrne\core\Conor\shader.h>
+#include <Conor/shader.h>
 
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
@@ -17,7 +16,8 @@ float vertices[] = {
 	 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 };
 
-Shader myShader("vertexShader.vert", "fragmentShader.frag");
+//Shader myShader("vertexShader.vert", "fragmentShader.frag");
+//Shader myShader("assets/vertexShader.vert","assets/fragmentShader.frag");
 
 int main() {
 	printf("Initializing...");
@@ -53,6 +53,8 @@ int main() {
 	//COLOR RGBA
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
+
+	Shader myShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {

@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <C:\Users\Conor\Desktop\GPR-200-fa2024-Conor-Byrne\core\ew\external\glad.h>
+#include "../ew/external/glad.h"
 #include <string>
 //cant do any other way of including glad.h for some reason
 
