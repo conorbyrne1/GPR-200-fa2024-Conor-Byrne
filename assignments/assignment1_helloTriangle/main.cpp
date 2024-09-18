@@ -16,9 +16,6 @@ float vertices[] = {
 	 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 };
 
-//Shader myShader("vertexShader.vert", "fragmentShader.frag");
-//Shader myShader("assets/vertexShader.vert","assets/fragmentShader.frag");
-
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -63,6 +60,7 @@ int main() {
 		//UPDATE
 		float time = (float)glfwGetTime();
 
+
 		//DRAW
 		//Clear framebuffer
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
@@ -70,6 +68,7 @@ int main() {
 
 		//render the triangle
 		myShader.use();
+		myShader.setFloat("uTime", time); //shoutout james for helping me with this line
 
 		glBindVertexArray(VAO); //this happens 2x for clarity's sake
 		
