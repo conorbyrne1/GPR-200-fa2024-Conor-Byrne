@@ -3,7 +3,6 @@
 
 #include "../ew/external/glad.h"
 #include <string>
-//cant do any other way of including glad.h for some reason
 
 class Shader
 {
