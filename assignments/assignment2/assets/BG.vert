@@ -10,10 +10,12 @@ uniform float uTime;
 void main()
 {
 	Color = aColor; //Pass-through - not actually editing the color in this shader, just assigning a value and sending it back
-	TexCoord = aTexCoord;
+	TexCoord = aTexCoord * 5.0;
 
-	vec3 pos = aPos;
-	//pos.y += (sin(uTime + 6.0 - pos.x)/15);
+	vec3 pos = aPos * 4.0;
+
+	pos.x += mod(uTime*0.2, 1.0);
 	
 	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
+
 }

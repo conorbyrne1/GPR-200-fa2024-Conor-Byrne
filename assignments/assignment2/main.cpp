@@ -28,16 +28,6 @@ unsigned int indices[] = { // note that we start from 0!
 	1, 2, 3 // second triangle
 };
 
-//float BGvertices[] = {
-//	//   X     Y     Z			 R     G     B     A        texture coords
-//
-//		2.0f, 2.0f, 0.0f,		1.0f, 0.0f, 0.0f, 1.0f,		20.0f, 20.0f,    // top right
-//		2.0f, -2.0f, 0.0f,		0.0f, 1.0f, 0.0f, 1.0f,		20.0f, 0.0f,    // bottom right
-//		-2.0f,  -2.0f, 0.0f,	0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f,    // top left 
-//		-2.0f, 2.0f, 0.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 20.0f     // bottom left
-//
-//};
-
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -72,12 +62,6 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	////BGVertex buffer object
-	//unsigned int BVBO;
-	//glGenBuffers(1, &BVBO);
-	//glBindBuffer(GL_ARRAY_BUFFER, BVBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(BGvertices), BGvertices, GL_STATIC_DRAW);
-
 
 	//Position XYZ
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
@@ -101,15 +85,16 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, emoji);
 
 	
-
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// load and generate the texture
 	stbi_set_flip_vertically_on_load(true);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load("assets/emoji2.png", &width, &height, &nrChannels, 0);
 	if (data)
