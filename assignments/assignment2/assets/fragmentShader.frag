@@ -6,9 +6,9 @@ in vec2 TexCoord;
 
 uniform float uTime;
 
-uniform sampler2D texture3;
+uniform sampler2D myTexture;
 
 void main()
 {
-   FragColor = texture(texture3, TexCoord);
+   FragColor = texture(myTexture, TexCoord);
 } 

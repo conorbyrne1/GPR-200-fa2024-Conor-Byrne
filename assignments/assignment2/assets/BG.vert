@@ -13,7 +13,7 @@ void main()
 	TexCoord = aTexCoord;
 
 	vec3 pos = aPos;
-	pos.y += (sin(uTime + 6.0 - pos.x)/15);
+	//pos.y += (sin(uTime + 6.0 - pos.x)/15);
 	
 	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
 }

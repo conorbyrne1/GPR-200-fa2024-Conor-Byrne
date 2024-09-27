@@ -28,15 +28,15 @@ unsigned int indices[] = { // note that we start from 0!
 	1, 2, 3 // second triangle
 };
 
-float BGvertices[] = {
-	//   X     Y     Z			 R     G     B     A        texture coords
-
-		2.0f, 2.0f, 0.0f,		1.0f, 0.0f, 0.0f, 1.0f,		20.0f, 20.0f,    // top right
-		2.0f, -2.0f, 0.0f,		0.0f, 1.0f, 0.0f, 1.0f,		20.0f, 0.0f,    // bottom right
-		-2.0f,  -2.0f, 0.0f,	0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f,    // top left 
-		-2.0f, 2.0f, 0.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 20.0f     // bottom left
-
-};
+//float BGvertices[] = {
+//	//   X     Y     Z			 R     G     B     A        texture coords
+//
+//		2.0f, 2.0f, 0.0f,		1.0f, 0.0f, 0.0f, 1.0f,		20.0f, 20.0f,    // top right
+//		2.0f, -2.0f, 0.0f,		0.0f, 1.0f, 0.0f, 1.0f,		20.0f, 0.0f,    // bottom right
+//		-2.0f,  -2.0f, 0.0f,	0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f,    // top left 
+//		-2.0f, 2.0f, 0.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 20.0f     // bottom left
+//
+//};
 
 int main() {
 	printf("Initializing...");
@@ -72,11 +72,11 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	//BGVertex buffer object
-	unsigned int BVBO;
-	glGenBuffers(1, &BVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, BVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(BGvertices), BGvertices, GL_STATIC_DRAW);
+	////BGVertex buffer object
+	//unsigned int BVBO;
+	//glGenBuffers(1, &BVBO);
+	//glBindBuffer(GL_ARRAY_BUFFER, BVBO);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(BGvertices), BGvertices, GL_STATIC_DRAW);
 
 
 	//Position XYZ
@@ -96,9 +96,9 @@ int main() {
 
 	// TEXTURE STUFF
 
-	unsigned int texture3;
-	glGenTextures(1, &texture3);
-	glBindTexture(GL_TEXTURE_2D, texture3);
+	unsigned int emoji;
+	glGenTextures(1, &emoji);
+	glBindTexture(GL_TEXTURE_2D, emoji);
 
 	
 
@@ -116,54 +116,56 @@ int main() {
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		printf("texture 3 loaded\n");
+		printf("emoji loaded\n");
 	}
 	else
 	{
-		printf("Failed to load texture 1 \n");
+		printf("Failed to load emoji \n");
 	}
 
 	stbi_image_free(data);
 
-	unsigned int texture2;
-	glGenTextures(1, &texture2);
+	unsigned int winston;
+	glGenTextures(1, &winston);
+	glBindTexture(GL_TEXTURE_2D, winston);
 
-	glBindTexture(GL_TEXTURE_2D, texture2);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
 	data = stbi_load("assets/winston.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		printf("texture 2 loaded\n");
+		printf("winston loaded\n");
 	}
 	else
 	{
-		printf("Failed to load texture 2 \n");
+		printf("Failed to load winston \n");
 	}
 
 	stbi_image_free(data);
 
-	unsigned int texture1;
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	unsigned int balling;
+	glGenTextures(1, &balling);
+	glBindTexture(GL_TEXTURE_2D, balling);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
 	data = stbi_load("assets/balling.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		printf("texture 1 loaded\n");
+		printf("balling loaded\n");
 	}
 	else
 	{
-		printf("Failed to load texture 3 \n");
+		printf("Failed to load balling \n");
 	}
 
 	stbi_image_free(data);
@@ -183,26 +185,28 @@ int main() {
 
 		//background
 		BGShader.use();
+		glBindVertexArray(VAO);
 		BGShader.setFloat("uTime", time);
+		glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
+		glBindTexture(GL_TEXTURE_2D, balling);
+		glActiveTexture(GL_TEXTURE1); // activate the texture unit first before binding texture
+		glBindTexture(GL_TEXTURE_2D, winston);
 		BGShader.setInt("texture1", 0);
 		BGShader.setInt("texture2", 1);
-		glActiveTexture(GL_TEXTURE1); // activate the texture unit first before binding texture
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glActiveTexture(GL_TEXTURE2); // activate the texture unit first before binding texture
-		glBindTexture(GL_TEXTURE_2D, texture2);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		//the other thing
 		//uniforms
 		myShader.use();
 		myShader.setFloat("uTime", time);
-		myShader.setInt("texture3", 0);
-		glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
-		glBindTexture(GL_TEXTURE_2D, texture3);
-		
+		glActiveTexture(GL_TEXTURE2); // activate the texture unit first before binding texture
+		glBindTexture(GL_TEXTURE_2D, emoji);
+		myShader.setInt("myTexture", 2);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		//Drawing happens here!
 		glfwSwapBuffers(window);
 	}
 	printf("Shutting down...");
 }
+	
