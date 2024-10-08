@@ -16,6 +16,35 @@ float vertices[] = {
 	 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 };
 
+glm::mat4 scale(float x, float y, float z) {
+	return glm::mat4(
+		x, 0.0, 0.0, 0.0,
+		0.0, y, 0.0, 0.0,
+		0.0, 0.0, z, 0.0,
+		0.0, 0.0, 0.0, 1.0
+	);
+}
+
+glm::mat4 rotateZ(float a) {
+	glm::mat4 m;
+	m[0][0] = cos(a);
+	m[1][0] = -sin(a);
+	m[0][1] = sin(a);
+	m[1][1] = cos(a);
+	m[2][2] = 1;
+	m[3][3] = 1;
+	return m;
+}
+
+glm::mat4 translate(float x, float y, float z) {
+	glm::mat4 m = glm::mat4(1); //IDENTITY matrix
+	m[3][0] = x;
+	m[3][1] = y;
+	m[3][2] = z;
+	return m;
+}
+
+
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -69,6 +98,18 @@ int main() {
 		//render the triangle
 		myShader.use();
 		myShader.setFloat("uTime", time); //shoutout james for helping me with this line
+
+		for (int i = 0; i < 20; i++)
+		{
+			glm::mat4 model = glm::mat4(1);
+			//model = scale(2.0f, 1.0f, 1.0f) * model;
+			//model = rotateZ(time + i) * model;
+			model = translate(cosf(time + i), sinf(time + i), 0.0f) * model;
+			myShader.setMat4("_Model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+		}
+		
+
 
 		glBindVertexArray(VAO); //this happens 2x for clarity's sake
 		
