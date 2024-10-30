@@ -198,7 +198,7 @@ int main() {
 
 	myShader.use();
 	myShader.setInt("myTexture", 2);
-	//myShader.set
+	myShader.setVec3("lightPos", lightPos);
 
 	glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 	
