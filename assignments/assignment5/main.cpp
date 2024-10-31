@@ -100,7 +100,8 @@ float lastX = SCREEN_WIDTH / 2.0f;
 float lastY = SCREEN_HEIGHT / 2.0f;
 float fov = 60.0f;
 
-glm::vec3 lightPos = glm::vec3(0.0f, 2.0f, 0.0f);
+glm::vec3 lightPos = glm::vec3(1.0f, 2.0f, 1.0f);
+glm::vec3 lightColor = glm::vec3(0.5f, 0.5f, 0.5f);
 
 int main() {
 	printf("Initializing...");
@@ -127,7 +128,6 @@ int main() {
 
 
 	//sets up the CUBES
-	//srand(time(0));
 	for (int i = 0; i < 3; i++)
 	{
 		cubePositions[i] = glm::vec3(-2.0 + (i*2.0), 0.0, 0.0);
@@ -149,9 +149,9 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	////COLOR RGBA
-	//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
-	//glEnableVertexAttribArray(1);
+	// normal
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
+	glEnableVertexAttribArray(1);
 
 	// TEXTURE
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
@@ -199,19 +199,18 @@ int main() {
 	myShader.use();
 	myShader.setInt("myTexture", 2);
 	myShader.setVec3("lightPos", lightPos);
+	myShader.setVec3("lightColor", lightColor);
 
 	glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 	
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
-		
 
 		//INPUT
 		processInput(window);
@@ -268,6 +267,7 @@ int main() {
 		// Create a window called Settings
 		ImGui::Begin("Settings");
 		ImGui::Text("Add Controls Here!");
+
 		ImGui::End();
 
 		// Actually render IMGUI elements using OpenGL
@@ -308,12 +308,14 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		cameraPos -= cameraSpeed * cameraUp;
 
-	/*if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
 	{
-		projection = glm::ortho(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.1f, 1000.0f);
-		projectionLoc = glGetUniformLocation(myShader.ID, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	}*/
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	else
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
