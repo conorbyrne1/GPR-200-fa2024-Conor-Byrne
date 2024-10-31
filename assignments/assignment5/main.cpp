@@ -68,23 +68,6 @@ float vertices[] = {
 
 glm::vec3 cubePositions[3];
 
-glm::mat4 scale(float x, float y, float z) {
-	return glm::mat4(
-		x, 0.0, 0.0, 0.0,
-		0.0, y, 0.0, 0.0,
-		0.0, 0.0, z, 0.0,
-		0.0, 0.0, 0.0, 1.0
-	);
-}
-
-glm::mat4 translate(float x, float y, float z) {
-	glm::mat4 m = glm::mat4(1); //IDENTITY matrix
-	m[3][0] = x;
-	m[3][1] = y;
-	m[3][2] = z;
-	return m;
-}
-
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -100,8 +83,13 @@ float lastX = SCREEN_WIDTH / 2.0f;
 float lastY = SCREEN_HEIGHT / 2.0f;
 float fov = 60.0f;
 
-glm::vec3 lightPos = glm::vec3(1.0f, 2.0f, 1.0f);
-glm::vec3 lightColor = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3 lightPos = glm::vec3(0.0f, 2.0f, 0.0f);
+glm::vec3 lightColor = glm::vec3(0.19f, 0.84f, 0.5f);
+
+float ambientK = 0.1f;
+float diffuseK = 0.1f;
+float specularK = 0.5f;
+float shininess = 32.0f;
 
 int main() {
 	printf("Initializing...");
@@ -158,10 +146,9 @@ int main() {
 	glEnableVertexAttribArray(2);
 
 	Shader myShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	Shader lightShader("assets/vertexShader.vert", "assets/lightFragShader.frag");
 	glEnable(GL_DEPTH_TEST);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
+	
 
 	// TEXTURE STUFF
 	unsigned int cat;
@@ -196,10 +183,11 @@ int main() {
 
 	stbi_image_free(data);
 
-	myShader.use();
+	/*myShader.use();
 	myShader.setInt("myTexture", 2);
 	myShader.setVec3("lightPos", lightPos);
 	myShader.setVec3("lightColor", lightColor);
+	myShader.setVec3("viewPos", cameraPos);*/
 
 	glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 	
@@ -226,6 +214,16 @@ int main() {
 		//Uniforms
 		myShader.use();
 		myShader.setFloat("uTime", time);
+		myShader.setInt("myTexture", 2);
+		myShader.setVec3("lightPos", lightPos);
+		myShader.setVec3("lightColor", lightColor);
+		myShader.setVec3("viewPos", cameraPos);
+
+		myShader.setFloat("shininess", shininess);
+		myShader.setFloat("ambientK", ambientK);
+		myShader.setFloat("diffuseK", diffuseK);
+		myShader.setFloat("specularK", specularK);
+
 		glActiveTexture(GL_TEXTURE2); // activate the texture unit first before binding texture
 		glBindTexture(GL_TEXTURE_2D, cat);
 		
@@ -242,6 +240,7 @@ int main() {
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		}
 
+
 		//camera setup
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -254,10 +253,26 @@ int main() {
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
+			//translates the 3 cubes to position
 			model = glm::translate(model, cubePositions[i]);
+			//rotates the cubes around their own local origin/center
+			model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 			myShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
+		lightShader.use();
+		lightShader.setMat4("projection", projection);
+		lightShader.setFloat("uTime", time);
+		lightShader.setVec3("lightColor", lightColor);
+
+		viewLoc = glGetUniformLocation(lightShader.ID, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		lightShader.setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// Start Drawing ImGUI
 		ImGui_ImplGlfw_NewFrame();
@@ -266,6 +281,12 @@ int main() {
 
 		// Create a window called Settings
 		ImGui::Begin("Settings");
+		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
+		ImGui::ColorEdit3("Light Color", &lightColor.r);
+		ImGui::SliderFloat("Ambient K", &ambientK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse K", &diffuseK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular K", &specularK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Shininess", &shininess, 2.0f, 1024.0f);
 		ImGui::Text("Add Controls Here!");
 
 		ImGui::End();
@@ -311,6 +332,8 @@ void processInput(GLFWwindow* window)
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetScrollCallback(window, scroll_callback);
+		glfwSetCursorPosCallback(window, mouse_callback);
 	}
 	else
 	{
