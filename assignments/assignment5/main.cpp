@@ -287,7 +287,6 @@ int main() {
 		ImGui::SliderFloat("Diffuse K", &diffuseK, 0.0f, 1.0f);
 		ImGui::SliderFloat("Specular K", &specularK, 0.0f, 1.0f);
 		ImGui::SliderFloat("Shininess", &shininess, 2.0f, 1024.0f);
-		ImGui::Text("Add Controls Here!");
 
 		ImGui::End();
 
@@ -343,34 +342,38 @@ void processInput(GLFWwindow* window)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (firstMouse)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
 	{
+
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos;
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+
+		float sens = 0.3f;
+		xoffset *= sens;
+		yoffset *= sens;
+
+		yaw += xoffset;
+		pitch += yoffset;
+		if (pitch > 89.0f)
+			pitch = 89.0f;
+		if (pitch < -89.0f)
+			pitch = -89.0f;
+
+		glm::vec3 direction;
+		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		direction.y = sin(glm::radians(pitch));
+		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		cameraFront = glm::normalize(direction);
 	}
-	
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	float sens = 0.3f;
-	xoffset *= sens;
-	yoffset *= sens;
-
-	yaw += xoffset;
-	pitch += yoffset;
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
 }
 void scroll_callback(GLFWwindow*, double xoffset, double yoffset)
 {
