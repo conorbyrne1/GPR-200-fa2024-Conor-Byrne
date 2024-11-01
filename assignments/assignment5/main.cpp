@@ -287,6 +287,7 @@ int main() {
 		ImGui::SliderFloat("Diffuse K", &diffuseK, 0.0f, 1.0f);
 		ImGui::SliderFloat("Specular K", &specularK, 0.0f, 1.0f);
 		ImGui::SliderFloat("Shininess", &shininess, 2.0f, 1024.0f);
+		ImGui::Text(":3");
 
 		ImGui::End();
 
